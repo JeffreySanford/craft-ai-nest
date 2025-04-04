@@ -1,0 +1,8 @@
+# Exclude JavaScript files in views directory from ESLint
+src/views/**/*.js
+test/**/*.js
+node_modules
+dist
+build
+coverage
+*.d.ts
