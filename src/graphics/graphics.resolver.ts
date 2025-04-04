@@ -1,9 +1,15 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, ObjectType, Field } from '@nestjs/graphql';
+
+@ObjectType()
+class GraphicUrl {
+  @Field()
+  url: string;
+}
 
 @Resolver()
 export class GraphicsResolver {
-  @Query(() => String)
-  getGraphicUrl(@Args('id') id: string): string {
-    return `http://localhost:3000/graphics/${id}`;
+  @Query(() => GraphicUrl)
+  getGraphicUrl(@Args('id') id: string): GraphicUrl {
+    return { url: `http://localhost:3000/graphics/${id}` };
   }
 }

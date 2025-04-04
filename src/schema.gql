@@ -2,7 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type GraphicUrl {
+  url: String!
+}
+
 type Query {
   askAI(prompt: String!): String!
-  getGraphicUrl(id: String!): String!
+  getGraphicUrl(id: String!): GraphicUrl!
 }

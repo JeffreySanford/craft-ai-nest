@@ -25,8 +25,14 @@ export class OllamaController {
     schema: {
       type: 'object',
       properties: {
-        prompt: { type: 'string', example: 'How to write a TypeScript function that sorts an array?' },
-        model: { type: 'string', example: 'codellama:13b' },
+        prompt: {
+          type: 'string',
+          example: 'How to write a TypeScript function that sorts an array?',
+        },
+        model: {
+          type: 'string',
+          example: 'codellama:13b',
+        },
       },
       required: ['prompt'],
     },
@@ -34,9 +40,9 @@ export class OllamaController {
   async complete(
     @Body() completionRequest: CompletionRequest,
     @Res() res: Response,
-    @Headers('x-request-id') requestId?: string,
+    @Headers('x-request-id') _requestId?: string,
   ): Promise<void> {
-    const { prompt, model } = completionRequest;
+    const { prompt } = completionRequest;
 
     if (!prompt || typeof prompt !== 'string') {
       this.logger.warn('Invalid prompt provided', 'OllamaController');
@@ -45,9 +51,7 @@ export class OllamaController {
     }
 
     try {
-      const result = await firstValueFrom(
-        this.ollamaService.invokeAI(prompt),
-      );
+      const result = await firstValueFrom(this.ollamaService.invokeAI(prompt));
       res.json({ completion: result });
     } catch (error) {
       this.logger.error(
