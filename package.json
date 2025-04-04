@@ -30,6 +30,7 @@
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/serve-static": "^5.0.3",
+    "@nestjs/swagger": "^11.1.1",
     "@types/graphql-upload": "^17.0.0",
     "@types/mongodb": "^4.0.6",
     "@types/mongoose": "^5.11.96",
@@ -60,6 +61,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
+    "@types/winston": "^2.4.4",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -73,8 +75,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0",
-    "@types/winston": "^2.4.4"
+    "typescript-eslint": "^8.20.0"
   },
   "jest": {
     "moduleFileExtensions": [
