@@ -21,78 +21,257 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Craft AI NestJS Platform
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A robust, secure backend platform built with NestJS, designed to support advanced technology solutions with integrated AI capabilities, rich media processing, and comprehensive logging. This platform is engineered to meet federal-grade security and compliance requirements while providing high observability and auditability.
 
-## Project setup
+## Overview
+
+Craft AI is a foundation platform for applications that need to combine:
+- AI-powered insights and code assistance
+- File and graphics management
+- Structured logging and auditing
+- Type-safe, reactive programming patterns
+
+## Key Components
+
+### 🤖 AI Integration with Local LLM (Ollama/CodeLlama)
+
+**Purpose:** Provide on-demand, AI-driven coding assistance and data processing capabilities without external dependencies.
+
+**Features:**
+- Integration with locally hosted LLM models via `@langchain/ollama` package
+- Reactive request handling using RxJS observables
+- GraphQL and REST endpoints for AI-generated responses
+
+**Benefits:**
+- Instant coding suggestions and data visualization assistance
+- Complete data privacy by keeping all processing local
+- No reliance on external cloud APIs
+
+### 📊 Graphics Module (MongoDB GridFS)
+
+**Purpose:** Manage public domain graphics and images to enhance project visualizations.
+
+**Features:**
+- File Upload Endpoint: Multer-based file handling with MongoDB GridFS storage
+- File Retrieval: Streaming of stored files back to clients
+- GraphQL integration for URL-based image access
+
+**Benefits:**
+- Flexible, scalable storage for dynamic visual content
+- Type-safe processing with RxJS observable patterns
+- Seamless integration with front-end applications
+
+### 📝 Logging & Auditing System
+
+**Purpose:** Maintain comprehensive audit trails and enable real-time monitoring.
+
+**Features:**
+- Winston-based structured logging to console and files
+- Real-time log streaming through EventSource
+- Advanced log filtering and visualization
+- MongoDB collection size monitoring with D3.js visualization
+
+**Benefits:**
+- Enhanced transparency and accountability
+- Federal/enterprise compliance capabilities
+- Robust debugging and monitoring tools
+
+### ⚡ Reactive & Type-Safe Architecture
+
+**Purpose:** Ensure robust, scalable, and maintainable application development.
+
+**Features:**
+- RxJS observables for all asynchronous operations
+- Strict TypeScript configurations and ESLint rules
+- Comprehensive type definitions
+
+**Benefits:**
+- Predictable and debuggable codebase
+- Compilation-time error catching
+- Improved developer experience
+
+### 📚 API Documentation with Swagger
+
+**Purpose:** Provide interactive API documentation and testing capabilities.
+
+**Features:**
+- OpenAPI/Swagger specification for all API endpoints
+- Interactive UI for testing endpoints directly from the browser
+- Request/response schema validation
+- Easy access from the logs viewer interface
+
+**Benefits:**
+- Simplified API integration and testing
+- Self-documenting endpoints with examples
+- Ability to trigger log events directly from the documentation
+
+## Setup and Installation
+
+### Prerequisites
+- Node.js 18+
+- MongoDB 5+
+- Ollama with CodeLlama 13B (for AI features)
+
+### Installation
 
 ```bash
-$ npm install
+# Clone the repository
+git clone https://github.com/your-org/craft-ai-nest.git
+
+# Install dependencies
+npm install
+
+# Configure environment (see .env.example)
+cp .env.example .env
+# Edit .env with your configuration
+
+# Start the application
+npm run start:dev
 ```
 
-## Compile and run the project
+## Installation Notes
 
+### Express Version Compatibility
+
+This project requires special handling of Express versions due to NestJS 11's transition to Express 5 while many ecosystem packages still require Express 4:
+
+- We use `@nestjs/serve-static@3.0.1` (instead of 5.x) for compatibility with Express 4.x
+- Installation requires the `--legacy-peer-deps` flag: `npm install --legacy-peer-deps`
+- A convenience script is provided: `npm run install:safe`
+
+## Configuration
+
+Key configuration options are available in the following files:
+- `.env` - Environment variables
+- `src/mongo/mongo-stats.service.ts` - Collection size limits
+- `src/winston/winston-logging.service.ts` - Logging configuration
+
+## API Endpoints
+
+### AI Endpoints
+- `POST /api/ai/complete` - Submit a prompt for AI completion
+- `GraphQL: aiCompletion(prompt: String!)` - GraphQL query for AI completion
+
+### Graphics Endpoints
+- `POST /graphics` - Upload a graphic file
+- `GET /graphics/:id` - Retrieve a graphic file
+- `GraphQL: graphicUrl(id: String!)` - Get URL for a graphic
+
+### Logging Endpoints
+- `GET /logs` - Get filtered logs
+- `GET /logs/view` - Web interface for log visualization
+- `GET /logs/stream` - EventSource stream for real-time logs
+- `GET /mongo-stats` - MongoDB collection size visualization
+
+### API Documentation
+- `GET /api` - Interactive Swagger UI documentation
+
+## Development
+
+### Project Structure
+- `src/ai` - AI integration services
+- `src/graphics` - File handling modules
+- `src/logger` - Logging and auditing system
+- `src/mongo` - MongoDB integrations and statistics
+- `src/views` - Frontend templates and visualizations
+
+### Testing
 ```bash
-# development
-$ npm run start
+# Run unit tests
+npm run test
 
-# watch mode
-$ npm run start:dev
+# Run end-to-end tests
+npm run test:e2e
 
-# production mode
-$ npm run start:prod
+# Check test coverage
+npm run test:cov
 ```
 
-## Run tests
+## Built With
 
-```bash
-# unit tests
-$ npm run test
+- [NestJS](https://nestjs.com/) - The web framework
+- [RxJS](https://rxjs.dev/) - Reactive Extensions Library
+- [MongoDB](https://www.mongodb.com/) - Database
+- [Mongoose](https://mongoosejs.com/) - MongoDB object modeling
+- [Winston](https://github.com/winstonjs/winston) - Logging framework
+- [LangChain](https://langchain.com/) - AI framework
+- [D3.js](https://d3js.org/) - Data visualization
+- [Swagger](https://swagger.io/) - API documentation
 
-# e2e tests
-$ npm run test:e2e
+## Integrating with Client Applications
 
-# test coverage
-$ npm run test:cov
-```
+This platform is designed to work seamlessly with modern frontend frameworks. Examples:
 
-## Deployment
+- Use the logging API to capture client-side events and user interactions
+- Leverage the graphics API for dynamic content in dashboards
+- Integrate the AI service for code completion or data analysis features
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Developer Integrations
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+The Craft AI NestJS platform is designed to integrate directly into the developer workflow through multiple channels:
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+### 🧰 Custom VS Code Extension
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**Purpose:** Enhance developer productivity by bringing platform capabilities directly into the IDE.
 
-## Resources
+**Features:**
+- **AI-Powered Code Assistance:** Send code context to AI endpoints (`/api/ai/complete`) to receive intelligent suggestions, refactoring ideas, and automated tests
+- **Graphics Management:** Drag-and-drop media into projects for automatic upload to the Graphics Module with URL generation
+- **Real-Time Logging Access:** View telemetry and audit trails within the editor for faster debugging
 
-Check out a few resources that may come in handy when working with NestJS:
+**Benefits:**
+- Seamless integration with development workflow
+- Instant AI-powered code insights without leaving the editor
+- Simplified asset management with automatic URL generation
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 🖥️ Command-Line Tools & APIs
 
-## Support
+**Purpose:** Enable automation and integration with build pipelines and other developer tools.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**Features:**
+- **Scripting & Automation:** Programmatically test code, fetch assets, or generate documentation
+- **CI/CD Integration:** Incorporate platform capabilities into automated build pipelines
+- **Batch Processing:** Process multiple assets or code blocks in a single operation
 
-## Stay in touch
+**Benefits:**
+- Automate repetitive tasks in development workflows
+- Ensure consistent code quality and asset management
+- Track AI-generated code and assets through the build process
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 📚 Interactive API Explorer
+
+**Purpose:** Provide comprehensive, interactive documentation of all available APIs.
+
+**Features:**
+- **Swagger/OpenAPI Integration:** Test endpoints directly from the browser
+- **Self-Documenting API:** Clear request/response schemas and examples
+- **GraphQL Playground:** Interactive query builder for GraphQL endpoints
+
+**Benefits:**
+- Faster onboarding for new developers
+- Easy exploration of available endpoints and capabilities
+- Test and validate API calls before implementation
+
+### 📦 Distribution & Access
+
+The platform reaches developers through multiple channels:
+
+- **VS Code Extension:** Available via Visual Studio Marketplace with configurable backend connections
+- **API Documentation & SDKs:** Published TypeScript SDKs on npm for easy integration
+- **Workshops & Tutorials:** Interactive learning resources to demonstrate platform capabilities
+- **GitHub Repository:** Open source access to example integrations and extension code
+
+## Security Considerations
+
+- All file operations are logged with user attribution
+- Comprehensive audit trails for compliance requirements
+- Safe handling of file uploads with proper validation
+- Typed interfaces throughout the application to prevent injection attacks
+
+---
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License - see the LICENSE file for details.
