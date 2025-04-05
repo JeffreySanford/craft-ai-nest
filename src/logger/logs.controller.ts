@@ -109,6 +109,29 @@ export class LogsController {
     }
   }
 
+  @Get('level-test')
+  async getLogLevelTestPage(@Res() res: Response): Promise<void> {
+    this.logger.debug('Serving log level test page', 'LogsController');
+    
+    try {
+      // Render the level-test template from file
+      const html = await this.templateService.render('logs/level-test.html', {});
+      res.setHeader('Content-Type', 'text/html');
+      res.send(html);
+      this.logger.debug('Log level test page served successfully', 'LogsController');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Failed to serve log level test page: ${message}`,
+        'LogsController',
+        error,
+      );
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send('Error loading log level test page');
+    }
+  }
+
   @Get('stream')
   @Header('Content-Type', 'text/event-stream')
   @Header('Cache-Control', 'no-cache')
@@ -187,71 +210,94 @@ export class LogsController {
           this.logger.error(
             `Failed to send error to client: ${message}`,
             'LogsController',
-          );
+          );mber | string,
         }
       },
       complete: () => {
         this.logger.debug('Log stream completed normally', 'LogsController');
         if (response.writable) {
           response.end();
-        }
-      },
-    });
-
+        }ut === 'string') {
+      },// Try to convert string level names to numbers
+    });   switch (levelInput.toUpperCase()) {
+        case 'DEBUG': level = LogLevel.DEBUG; break;
     // Handle client disconnect
-    response.on('close', () => {
-      this.logger.debug(
+    response.on('close', () => {    case 'LOG': level = LogLevel.LOG; break;
+      this.logger.debug('WARN': level = LogLevel.WARN; break;
         'Client disconnected from log stream',
         'LogsController',
       );
-      subscription.unsubscribe();
-    });
-  }
+      subscription.unsubscribe();       level = parseInt(levelInput, 10);
+    });      if (isNaN(level)) level = LogLevel.INFO; // Default
+  }          break;
 
   @Post()
-  createLog(
+  createLog(ut as number;
     @Body('level') level: number,
     @Body('message') message: LogEntry['message'],
-    @Body('context') context?: string,
-  ): void {
-    this.logger.log(message, level, context);
+    @Body('context') context?: string,ssage, level, context);
+  ): void {g(
+    this.logger.log(message, level, context);ed: level=${level}, context=${context || 'none'}`,
     this.logger.debug(
-      `Log created: level=${level}, context=${context || 'none'}`,
+      `Log created: level=${level}, context=${context || 'none'}`,    );
       'LogsController',
     );
-  }
+  }named routes
 
   // This route should come AFTER all other named routes
-  /*
-  @Get(':id')
-  getLogById(@Param('id') id: string): Observable<LogEntry> {
+  /*LogById(@Param('id') id: string): Observable<LogEntry> {
+  @Get(':id')    this.logger.debug(`Received request to get log with id: ${id}`, 'LogsController');
+  getLogById(@Param('id') id: string): Observable<LogEntry> {.getLogById(id).pipe();
     this.logger.debug(`Received request to get log with id: ${id}`, 'LogsController');
     return this.logger.getLogById(id).pipe();
   }
-  */
+  */  private buildLogFilter(
 
-  private buildLogFilter(
+  private buildLogFilter(ing,
     level?: string,
-    maxLevel?: string,
-    context?: string,
+    maxLevel?: string,attern?: string,
+    context?: string,    fromDate?: string,
     pattern?: string,
     fromDate?: string,
     toDate?: string,
   ): LogFilter {
-    const filter: LogFilter = {};
-
-    // Parse min level
-    if (level !== undefined) {
+    const filter: LogFilter = {};level
+= '') {
+    // Parse min level filter.minLevel = parseInt(level, 10);
+    if (level !== undefined) {      this.logger.debug(`Using min log level filter: ${filter.minLevel}`, 'LogsController');
       filter.minLevel = parseInt(level, 10);
-    } else {
-      filter.minLevel = LogLevel.DEBUG;
+    } else {vel = LogLevel.DEBUG;
+      filter.minLevel = LogLevel.DEBUG;um level', 'LogsController');
     }
 
-    // Parse max level
-    if (maxLevel !== undefined && maxLevel !== '') {
-      filter.maxLevel = parseInt(maxLevel, 10);
-    }
+    // Parse max levelevel
+    if (maxLevel !== undefined && maxLevel !== '') { if (maxLevel !== undefined && maxLevel !== '') {
+      filter.maxLevel = parseInt(maxLevel, 10);     filter.maxLevel = parseInt(maxLevel, 10);
+    }    }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}  }    return filter;    }      filter.messagePattern = new RegExp(pattern);    if (pattern) {    // Parse message pattern    }      filter.toDate = new Date(toDate);    if (toDate) {    }      filter.fromDate = new Date(fromDate);    if (fromDate) {    // Parse date range    }      filter.contexts = [context];    if (context) {    // Parse context filter
     // Parse context filter
     if (context) {
       filter.contexts = [context];

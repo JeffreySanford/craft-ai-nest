@@ -21,257 +21,121 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-# Craft AI NestJS Platform
+# Craft AI - NestJS Backend
 
-A robust, secure backend platform built with NestJS, designed to support advanced technology solutions with integrated AI capabilities, rich media processing, and comprehensive logging. This platform is engineered to meet federal-grade security and compliance requirements while providing high observability and auditability.
+![Status: In Development](https://img.shields.io/badge/Status-In%20Development-yellow)
 
-## Overview
+A powerful NestJS backend powering the Craft AI system with comprehensive logging, metrics collection, and GraphQL support.
 
-Craft AI is a foundation platform for applications that need to combine:
-- AI-powered insights and code assistance
-- File and graphics management
-- Structured logging and auditing
-- Type-safe, reactive programming patterns
+## 🚀 Project Status
 
-## Key Components
+We're currently in the development phase, with several key features already implemented:
 
-### 🤖 AI Integration with Local LLM (Ollama/CodeLlama)
+### Completed ✅
+- **Step 1: Core Framework Setup** - NestJS with MongoDB, GraphQL, and Express
+- **Step 2: Advanced Logging System** - Real-time log viewer with filtering and streaming
+- **Step 3: File Storage System** - Graphics upload and retrieval with GridFS
 
-**Purpose:** Provide on-demand, AI-driven coding assistance and data processing capabilities without external dependencies.
+### In Progress 🔄
+- **Step 4: Metrics Collection System** - Real-time metrics visualization (currently being implemented)
+- **Step 5: AI Integration** - Ollama service integration for AI capabilities
 
-**Features:**
-- Integration with locally hosted LLM models via `@langchain/ollama` package
-- Reactive request handling using RxJS observables
-- GraphQL and REST endpoints for AI-generated responses
+### Planned 📝
+- **Step 6: User Authentication** - User management and access control
+- **Step 7: API Gateway** - Unified access point for all services
+- **Step 8: Deployment Pipeline** - Automated testing and deployment
 
-**Benefits:**
-- Instant coding suggestions and data visualization assistance
-- Complete data privacy by keeping all processing local
-- No reliance on external cloud APIs
+## 📋 Features
 
-### 📊 Graphics Module (MongoDB GridFS)
+### Logging System
+- **Real-time Log Streaming**: View logs as they happen with SSE (Server-Sent Events)
+- **Color-coded Log Levels**: Visual distinction between DEBUG, INFO, LOG, WARN, and ERROR
+- **Context-based Styling**: Special styling for performance, security, network, and user logs
+- **Advanced Filtering**: Filter by log level, context, and text search patterns
+- **Time Range Selection**: View logs from last 5 minutes to all time
+- **Audit Trail**: Track important system events in a separate audit log
+- **User Activity Tracking**: Monitor recent user actions and file operations
 
-**Purpose:** Manage public domain graphics and images to enhance project visualizations.
+### Graphics System
+- Secure file upload and storage using GridFS
+- On-demand file retrieval with proper content-type detection
+- Integration with the audit system for compliance tracking
 
-**Features:**
-- File Upload Endpoint: Multer-based file handling with MongoDB GridFS storage
-- File Retrieval: Streaming of stored files back to clients
-- GraphQL integration for URL-based image access
+### Metrics Collection (In Development)
+- Real-time CPU, memory, and request metrics
+- Historical data visualization
+- Threshold alerting for critical metrics
 
-**Benefits:**
-- Flexible, scalable storage for dynamic visual content
-- Type-safe processing with RxJS observable patterns
-- Seamless integration with front-end applications
-
-### 📝 Logging & Auditing System
-
-**Purpose:** Maintain comprehensive audit trails and enable real-time monitoring.
-
-**Features:**
-- Winston-based structured logging to console and files
-- Real-time log streaming through EventSource
-- Advanced log filtering and visualization
-- MongoDB collection size monitoring with D3.js visualization
-
-**Benefits:**
-- Enhanced transparency and accountability
-- Federal/enterprise compliance capabilities
-- Robust debugging and monitoring tools
-
-### ⚡ Reactive & Type-Safe Architecture
-
-**Purpose:** Ensure robust, scalable, and maintainable application development.
-
-**Features:**
-- RxJS observables for all asynchronous operations
-- Strict TypeScript configurations and ESLint rules
-- Comprehensive type definitions
-
-**Benefits:**
-- Predictable and debuggable codebase
-- Compilation-time error catching
-- Improved developer experience
-
-### 📚 API Documentation with Swagger
-
-**Purpose:** Provide interactive API documentation and testing capabilities.
-
-**Features:**
-- OpenAPI/Swagger specification for all API endpoints
-- Interactive UI for testing endpoints directly from the browser
-- Request/response schema validation
-- Easy access from the logs viewer interface
-
-**Benefits:**
-- Simplified API integration and testing
-- Self-documenting endpoints with examples
-- Ability to trigger log events directly from the documentation
-
-## Setup and Installation
+## 🛠 Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB 5+
-- Ollama with CodeLlama 13B (for AI features)
+- Node.js (v16+)
+- MongoDB (v4.4+)
+- Ollama (for AI capabilities)
 
 ### Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/your-org/craft-ai-nest.git
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/craft-ai-nest.git
+   cd craft-ai-nest
+   ```
 
-# Install dependencies
-npm install
+2. Install dependencies
+   ```bash
+   npm install
+   ```
 
-# Configure environment (see .env.example)
-cp .env.example .env
-# Edit .env with your configuration
+3. Start MongoDB
+   ```bash
+   # Using Docker
+   docker run -d -p 27017:27017 --name craft-ai-mongo mongo:latest
+   ```
 
-# Start the application
-npm run start:dev
-```
+4. Start the application
+   ```bash
+   npm run start:dev
+   ```
 
-## Installation Notes
+5. Access the application:
+   - Log Viewer: http://localhost:3000/logs/view
+   - GraphQL Playground: http://localhost:3000/graphql
+   - Metrics Viewer: http://localhost:3000/metrics/viewer.html (in development)
 
-### Express Version Compatibility
+## 📊 Log Viewer Usage Guide
 
-This project requires special handling of Express versions due to NestJS 11's transition to Express 5 while many ecosystem packages still require Express 4:
+1. **Log Levels**
+   - **DEBUG**: All logs (most verbose)
+   - **INFO**: Information, warnings, and errors only
+   - **LOG**: Standard logs, warnings, and errors
+   - **WARN**: Only warnings and errors
+   - **ERROR**: Only error logs
 
-- We use `@nestjs/serve-static@3.0.1` (instead of 5.x) for compatibility with Express 4.x
-- Installation requires the `--legacy-peer-deps` flag: `npm install --legacy-peer-deps`
-- A convenience script is provided: `npm run install:safe`
+2. **Special Context Filters**:
+   - **UI/UX Events**: User interface interactions
+   - **System Events**: Core system operations
+   - **Metrics Events**: Performance data logs
 
-## Configuration
+3. **Testing Log Generation**:
+   - Use the "Trigger Info Log" button to generate sample logs
+   - Use "Trigger Error Log" button to test error handling
+   - The "Test Log Levels" page (http://localhost:3000/logs/level-test) can generate logs at each level
 
-Key configuration options are available in the following files:
-- `.env` - Environment variables
-- `src/mongo/mongo-stats.service.ts` - Collection size limits
-- `src/winston/winston-logging.service.ts` - Logging configuration
+## 🔒 Security
 
-## API Endpoints
+This project includes various security features:
+- Sanitized user input
+- Proper error handling
+- Audit logging for compliance
+- GraphQL query depth limiting
 
-### AI Endpoints
-- `POST /api/ai/complete` - Submit a prompt for AI completion
-- `GraphQL: aiCompletion(prompt: String!)` - GraphQL query for AI completion
+## 📖 Additional Documentation
 
-### Graphics Endpoints
-- `POST /graphics` - Upload a graphic file
-- `GET /graphics/:id` - Retrieve a graphic file
-- `GraphQL: graphicUrl(id: String!)` - Get URL for a graphic
+- [Developer Guide](docs/DEVELOPERS.md)
+- [Metrics System](docs/METRICS.md) 
+- [API Documentation](docs/API.md)
+- [Security Policy](SECURITY.md)
 
-### Logging Endpoints
-- `GET /logs` - Get filtered logs
-- `GET /logs/view` - Web interface for log visualization
-- `GET /logs/stream` - EventSource stream for real-time logs
-- `GET /mongo-stats` - MongoDB collection size visualization
-
-### API Documentation
-- `GET /api` - Interactive Swagger UI documentation
-
-## Development
-
-### Project Structure
-- `src/ai` - AI integration services
-- `src/graphics` - File handling modules
-- `src/logger` - Logging and auditing system
-- `src/mongo` - MongoDB integrations and statistics
-- `src/views` - Frontend templates and visualizations
-
-### Testing
-```bash
-# Run unit tests
-npm run test
-
-# Run end-to-end tests
-npm run test:e2e
-
-# Check test coverage
-npm run test:cov
-```
-
-## Built With
-
-- [NestJS](https://nestjs.com/) - The web framework
-- [RxJS](https://rxjs.dev/) - Reactive Extensions Library
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Mongoose](https://mongoosejs.com/) - MongoDB object modeling
-- [Winston](https://github.com/winstonjs/winston) - Logging framework
-- [LangChain](https://langchain.com/) - AI framework
-- [D3.js](https://d3js.org/) - Data visualization
-- [Swagger](https://swagger.io/) - API documentation
-
-## Integrating with Client Applications
-
-This platform is designed to work seamlessly with modern frontend frameworks. Examples:
-
-- Use the logging API to capture client-side events and user interactions
-- Leverage the graphics API for dynamic content in dashboards
-- Integrate the AI service for code completion or data analysis features
-
-## Developer Integrations
-
-The Craft AI NestJS platform is designed to integrate directly into the developer workflow through multiple channels:
-
-### 🧰 Custom VS Code Extension
-
-**Purpose:** Enhance developer productivity by bringing platform capabilities directly into the IDE.
-
-**Features:**
-- **AI-Powered Code Assistance:** Send code context to AI endpoints (`/api/ai/complete`) to receive intelligent suggestions, refactoring ideas, and automated tests
-- **Graphics Management:** Drag-and-drop media into projects for automatic upload to the Graphics Module with URL generation
-- **Real-Time Logging Access:** View telemetry and audit trails within the editor for faster debugging
-
-**Benefits:**
-- Seamless integration with development workflow
-- Instant AI-powered code insights without leaving the editor
-- Simplified asset management with automatic URL generation
-
-### 🖥️ Command-Line Tools & APIs
-
-**Purpose:** Enable automation and integration with build pipelines and other developer tools.
-
-**Features:**
-- **Scripting & Automation:** Programmatically test code, fetch assets, or generate documentation
-- **CI/CD Integration:** Incorporate platform capabilities into automated build pipelines
-- **Batch Processing:** Process multiple assets or code blocks in a single operation
-
-**Benefits:**
-- Automate repetitive tasks in development workflows
-- Ensure consistent code quality and asset management
-- Track AI-generated code and assets through the build process
-
-### 📚 Interactive API Explorer
-
-**Purpose:** Provide comprehensive, interactive documentation of all available APIs.
-
-**Features:**
-- **Swagger/OpenAPI Integration:** Test endpoints directly from the browser
-- **Self-Documenting API:** Clear request/response schemas and examples
-- **GraphQL Playground:** Interactive query builder for GraphQL endpoints
-
-**Benefits:**
-- Faster onboarding for new developers
-- Easy exploration of available endpoints and capabilities
-- Test and validate API calls before implementation
-
-### 📦 Distribution & Access
-
-The platform reaches developers through multiple channels:
-
-- **VS Code Extension:** Available via Visual Studio Marketplace with configurable backend connections
-- **API Documentation & SDKs:** Published TypeScript SDKs on npm for easy integration
-- **Workshops & Tutorials:** Interactive learning resources to demonstrate platform capabilities
-- **GitHub Repository:** Open source access to example integrations and extension code
-
-## Security Considerations
-
-- All file operations are logged with user attribution
-- Comprehensive audit trails for compliance requirements
-- Safe handling of file uploads with proper validation
-- Typed interfaces throughout the application to prevent injection attacks
-
----
-
-## License
+## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
