@@ -10,9 +10,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { OllamaService } from './ai/ollama.service';
 import { GraphicsModule } from './graphics/graphics.module';
 import { LoggerModule } from './logger/logger.module';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
+    MetricsModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -24,6 +26,9 @@ import { LoggerModule } from './logger/logger.module';
       serveStaticOptions: {
         index: false, // Don't serve index.html by default
         extensions: ['html', 'css', 'js', 'ts'], // Add support for TypeScript files
+        // Fix for Express version compatibility
+        fallthrough: true,
+        etag: true,
       },
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/craft-ai-nest'),

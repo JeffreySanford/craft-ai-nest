@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Metrics Gateway Tester</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #metrics { height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; }
+    .control-panel { margin-bottom: 20px; }
+    button { margin-right: 10px; padding: 8px; }
+    .metric { margin-bottom: 5px; padding: 5px; border-bottom: 1px solid #eee; }
+    .metric-cpu { background-color: #e3f2fd; }
+    .metric-memory { background-color: #e8f5e9; }
+    .status { padding: 10px; margin: 10px 0; }
+    .connected { background-color: #4caf50; color: white; }
+    .disconnected { background-color: #f44336; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Metrics Gateway Tester</h1>
+  
+  <div class="status disconnected" id="connectionStatus">Disconnected</div>
+  
+  <div class="control-panel">
+    <button id="connectBtn">Connect</button>
+    <button id="disconnectBtn" disabled>Disconnect</button>
+    <button id="subscribeBtn" disabled>Subscribe</button>
+    <button id="unsubscribeBtn" disabled>Unsubscribe</button>
+    <button id="getHistoricalBtn" disabled>Get Historical</button>
+  </div>
+  
+  <div class="filter-panel">
+    <h3>Filter</h3>
+    <div>
+      <input type="checkbox" id="cpuFilter" checked>
+      <label for="cpuFilter">CPU</label>
+      <input type="checkbox" id="memoryFilter" checked>
+      <label for="memoryFilter">Memory</label>
+    </div>
+  </div>
+  
+  <h3>Metrics</h3>
+  <div id="metrics"></div>
+  
+  <script>
+    let socket;
+    const metricsDiv = document.getElementById('metrics');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    const unsubscribeBtn = document.getElementById('unsubscribeBtn');
+    const getHistoricalBtn = document.getElementById('getHistoricalBtn');
+    
+    function updateButtonStates(connected, subscribed = false) {
+      connectBtn.disabled = connected;
+      disconnectBtn.disabled = !connected;
+      subscribeBtn.disabled = !connected || subscribed;
+      unsubscribeBtn.disabled = !connected || !subscribed;
+      getHistoricalBtn.disabled = !connected;
+    }
+    
+    function updateConnectionStatus(connected) {
+      connectionStatus.textContent = connected ? 'Connected' : 'Disconnected';
+      connectionStatus.className = connected ? 'status connected' : 'status disconnected';
+    }
+    
+    function addMetric(metric, historical = false) {
+      const metricEl = document.createElement('div');
+      metricEl.className = `metric metric-${metric.type.toLowerCase()}`;
+      
+      const time = new Date(metric.timestamp).toLocaleTimeString();
+      metricEl.innerHTML = `
+        <strong>${time}</strong> - 
+        ${metric.type}: ${metric.value}${metric.unit} 
+        ${historical ? '(Historical)' : ''}
+      `;
+      
+      // Insert at the top
+      metricsDiv.insertBefore(metricEl, metricsDiv.firstChild);
+    }
+    
+    function getSelectedMetricTypes() {
+      const types = [];
+      if (document.getElementById('cpuFilter').checked) types.push('CPU');
+      if (document.getElementById('memoryFilter').checked) types.push('MEMORY');
+      return types;
+    }
+    
+    // Connect button
+    connectBtn.addEventListener('click', () => {
+      socket = io('/metrics');
+      
+      socket.on('connect', () => {
+        console.log('Connected to metrics gateway');
+        updateConnectionStatus(true);
+        updateButtonStates(true);
+      });
+      
+      socket.on('disconnect', () => {
+        console.log('Disconnected from metrics gateway');
+        updateConnectionStatus(false);
+        updateButtonStates(false);
+      });
+      
+      socket.on('metric', (metric) => {
+        console.log('Received metric:', metric);
+        addMetric(metric);
+      });
+      
+      socket.on('subscribed', (data) => {
+        console.log('Subscription confirmed:', data);
+        updateButtonStates(true, true);
+      });
+      
+      socket.on('unsubscribed', (data) => {
+        console.log('Unsubscription confirmed:', data);
+        updateButtonStates(true, false);
+      });
+      
+      socket.on('historical', (metrics) => {
+        console.log('Received historical metrics:', metrics);
+        if (Array.isArray(metrics)) {
+          metrics.forEach(metric => addMetric(metric, true));
+        }
+      });
+      
+      socket.on('error', (data) => {
+        console.error('Received error:', data);
+        alert(`Error: ${data.message}`);
+      });
+      
+      socket.on('complete', (data) => {
+        console.log('Stream completed:', data);
+      });
+    });
+    
+    // Disconnect button
+    disconnectBtn.addEventListener('click', () => {
+      if (socket) {
+        socket.disconnect();
+        socket = null;
+      }
+    });
+    
+    // Subscribe button
+    subscribeBtn.addEventListener('click', () => {
+      const types = getSelectedMetricTypes();
+      console.log('Subscribing with types:', types);
+      socket.emit('subscribe', { types });
+    });
+    
+    // Unsubscribe button
+    unsubscribeBtn.addEventListener('click', () => {
+      socket.emit('unsubscribe');
+    });
+    
+    // Get historical button
+    getHistoricalBtn.addEventListener('click', () => {
+      const types = getSelectedMetricTypes();
+      console.log('Getting historical metrics with types:', types);
+      socket.emit('getHistorical', { types });
+    });
+    
+    // Initialize UI
+    updateConnectionStatus(false);
+    updateButtonStates(false);
+  </script>
+</body>
+</html>

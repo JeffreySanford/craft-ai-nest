@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Metrics Viewer</title>
+    <link rel="stylesheet" href="/metrics/styles.css">
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/metrics/viewer.js" defer></script>
+  </head>
+  <body>
+    <div class="controls">
+      <div class="filter-row">
+        <div class="filter-item">
+          <label for="metricType">Metric Type:</label>
+          <select id="metricType" multiple>
+            <option value="cpu" selected>CPU Usage</option>
+            <option value="memory">Memory Usage</option>
+            <option value="request_rate">Request Rate</option>
+            <option value="response_time">Response Time</option>
+            <option value="error_rate">Error Rate</option>
+            <option value="queue_size">Queue Size</option>
+            <option value="active_users">Active Users</option>
+            <option value="disk_io">Disk I/O</option>
+            <option value="network_io">Network I/O</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label for="minValue">Min Value:</label>
+          <input type="number" id="minValue" placeholder="Min value">
+        </div>
+        <div class="filter-item">
+          <label for="maxValue">Max Value:</label>
+          <input type="number" id="maxValue" placeholder="Max value">
+        </div>
+        <div class="filter-item">
+          <label for="timeRange">Time Range:</label>
+          <select id="timeRange">
+            <option value="5min" selected>Last 5 Minutes</option>
+            <option value="hour">Last Hour</option>
+            <option value="day">Last Day</option>
+            <option value="week">Last Week</option>
+            <option value="month">Last Month</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="applyFilters">Apply Filters</button>
+        <button id="clearFilters" class="secondary">Clear Filters</button>
+        <button id="toggleRealtime">Pause Real-time</button>
+        <button id="triggerCpuSpike" class="danger">Trigger CPU Spike</button>
+        <button id="triggerMemorySpike" class="danger">Trigger Memory Spike</button>
+      </div>
+    </div>
+    
+    <div class="content-container">
+      <div class="charts-container" id="chartsContainer">
+        <canvas id="mainChart"></canvas>
+      </div>
+      
+      <div class="sidebar-container">
+        <!-- Alerts Container -->
+        <div class="alerts-container">
+          <div class="alerts-header">
+            <h3>Alert History</h3>
+            <div class="alerts-controls">
+              <button id="clearAlerts" class="small-button">Clear</button>
+              <button id="expandAlerts" class="small-button">Expand</button>
+            </div>
+          </div>
+          <div class="alerts-content" id="alertsContainer">
+            <!-- Alerts will be inserted here -->
+          </div>
+        </div>
+        
+        <!-- System Status Module -->
+        <div class="module-container green-border">
+          <div class="module-header">
+            <h3>System Status</h3>
+          </div>
+          <div class="module-content" id="systemStatus">
+            <p>Loading system status...</p>
+          </div>
+        </div>
+        
+        <!-- Last Metrics Module -->
+        <div class="module-container blue-border">
+          <div class="module-header">
+            <h3>Latest Metrics</h3>
+          </div>
+          <div class="module-content" id="lastMetrics">
+            <p>Waiting for metrics data...</p>
+          </div>
+        </div>
+        
+        <!-- Thresholds Module -->
+        <div class="module-container purple-border">
+          <div class="module-header">
+            <h3>Thresholds</h3>
+          </div>
+          <div class="module-content" id="thresholds">
+            <p>Loading thresholds...</p>
+          </div>
+        </div>
+        
+        <!-- Debug Log Module -->
+        <div class="module-container red-border">
+          <div class="module-header">
+            <h3>Debug Logs</h3>
+            <button id="clearLogs" class="small-button">Clear</button>
+          </div>
+          <div class="module-content" id="debugLogs">
+            <p>Connection and metric logs will appear here...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="metricOverlay" class="overlay hidden">
+      <div class="overlay-content">
+        <button id="closeOverlay" class="close-btn">&times;</button>
+        <h2>Metric Details</h2>
+        <pre id="metricDetails"></pre>
+      </div>
+    </div>
+    
+    <div class="bottom-controls">
+      <div>
+        <button id="exportMetrics" class="secondary">Export Data</button>
+      </div>
+      <div>
+        <span id="connectionStatus" class="streaming-inactive">Disconnected</span>
+        <span id="metricCount">0 metrics</span>
+      </div>
+    </div>
+    
+    <script>
+      // Add at the end of your script:
+      function logDebug(message) {
+        const logsDiv = document.getElementById('debugLogs');
+        if (!logsDiv) return;
+        
+        const logEntry = document.createElement('div');
+        logEntry.className = 'debug-log';
+        const time = new Date().toLocaleTimeString();
+        logEntry.innerHTML = `<span class="debug-time">${time}</span> ${message}`;
+        
+        logsDiv.insertBefore(logEntry, logsDiv.firstChild);
+        
+        // Limit number of entries
+        if (logsDiv.children.length > 50) {
+          logsDiv.removeChild(logsDiv.lastChild);
+        }
+      }
+      
+      // Connect to socket.io logging events
+      socket.on('connect', () => logDebug('Connected to server'));
+      socket.on('metric', (metric) => logDebug(`Received ${metric.type}: ${metric.value}${metric.unit}`));
+      socket.on('error', (error) => logDebug(`ERROR: ${error.message}`));
+      
+      // Clear logs button
+      document.getElementById('clearLogs')?.addEventListener('click', () => {
+        document.getElementById('debugLogs').innerHTML = '';
+      });
+    </script>
+  </body>
+</html>
