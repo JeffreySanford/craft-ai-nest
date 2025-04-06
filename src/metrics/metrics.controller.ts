@@ -20,7 +20,9 @@ import {
 } from './metrics.types';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('metrics')
 @Controller('metrics')
 export class MetricsController {
   private readonly CONTEXT = 'MetricsController';
@@ -31,6 +33,28 @@ export class MetricsController {
   ) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'Get current system metrics',
+    description: 'Returns a snapshot of all current system metrics',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the current system metrics',
+    schema: {
+      type: 'object',
+      properties: {
+        cpu: { type: 'number', description: 'CPU utilization percentage' },
+        memory: { type: 'number', description: 'Memory usage in MB' },
+        uptime: { type: 'number', description: 'System uptime in seconds' },
+        requestRate: { type: 'number', description: 'Requests per second' },
+        timestamp: {
+          type: 'string',
+          format: 'date-time',
+          description: 'Timestamp of metrics collection',
+        },
+      },
+    },
+  })
   getAllMetrics(
     @Query('type') typesStr?: string,
     @Query('from') fromDate?: string,

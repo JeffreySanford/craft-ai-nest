@@ -6,6 +6,11 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { LoggerService } from './logger/logger.service';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
 
 const CONTEXT = 'Bootstrap';
 
@@ -43,6 +48,43 @@ async function bootstrap(): Promise<void> {
       CONTEXT,
     );
 
+    // Set up Swagger documentation
+    const config = new DocumentBuilder()
+      .setTitle('Craft AI API')
+      .setDescription('API documentation for the Craft AI application')
+      .setVersion('1.0')
+      .addTag('logs', 'System logs and audit trails')
+      .addTag('graphics', 'File upload and retrieval operations')
+      .addTag('metrics', 'System metrics collection and reporting')
+      .addTag('ai', 'AI-powered services and completions')
+      .addBearerAuth() // For future authentication implementation
+      .build();
+
+    const options: SwaggerDocumentOptions = {
+      operationIdFactory: (controllerKey: string, methodKey: string) =>
+        methodKey,
+      deepScanRoutes: true,
+    };
+
+    const document = SwaggerModule.createDocument(app, config, options);
+
+    // Set up Swagger UI at /api path
+    SwaggerModule.setup('api', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+        tagsSorter: 'alpha',
+        operationsSorter: 'alpha',
+        docExpansion: 'none',
+      },
+      customCss: `
+        .swagger-ui .topbar { display: none }
+        .swagger-ui .info { margin-top: 20px }
+      `,
+      customSiteTitle: 'Craft AI API Documentation',
+    });
+
+    appLogger.info('Swagger documentation initialized at /api', CONTEXT);
+
     // Start the server with proper error handling
     const port = process.env.PORT ?? 3000;
 
@@ -56,6 +98,10 @@ async function bootstrap(): Promise<void> {
           );
           appLogger.debug(
             `Server running at http://localhost:${port}/`,
+            CONTEXT,
+          );
+          appLogger.info(
+            `API documentation available at http://localhost:${port}/api`,
             CONTEXT,
           );
           appLogger.debug(

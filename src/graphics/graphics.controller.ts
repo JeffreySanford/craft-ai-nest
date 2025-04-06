@@ -18,6 +18,14 @@ import { catchError, map, mergeMap, finalize, tap } from 'rxjs/operators';
 import { OnModuleDestroy } from '@nestjs/common';
 import { GraphicFile, UploadResponse } from './graphics.types';
 import { LoggerService, LogLevel } from '../logger/logger.service';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiBody,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 /**
  * Type guard to validate that a file has required properties
@@ -35,6 +43,7 @@ function isValidGraphicFile(file: unknown): file is GraphicFile {
   );
 }
 
+@ApiTags('graphics')
 @Controller('graphics')
 export class GraphicsController implements OnModuleDestroy {
   private activeSubscriptions: Set<Subscription> = new Set();
@@ -63,6 +72,11 @@ export class GraphicsController implements OnModuleDestroy {
    * Provides a simple HTML upload form for testing purposes
    */
   @Get('upload')
+  @ApiOperation({
+    summary: 'Serves the upload form page',
+    description: 'Provides a simple HTML form for testing file uploads',
+  })
+  @ApiResponse({ status: 200, description: 'Returns the HTML upload form' })
   getUploadForm(@Res() res: Response): void {
     this.logger.debug('Serving upload form page', this.CONTEXT);
 
@@ -194,6 +208,36 @@ export class GraphicsController implements OnModuleDestroy {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Upload a graphic file' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'The file to upload',
+        },
+      },
+      required: ['file'],
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'File uploaded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+          description: 'The ID of the uploaded file',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid file format' })
+  @ApiResponse({ status: 500, description: 'Server error during upload' })
   @UseInterceptors(FileInterceptor('file'))
   uploadGraphic(
     @UploadedFile() uploadedFile: unknown,
@@ -300,6 +344,14 @@ export class GraphicsController implements OnModuleDestroy {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get a graphic file by ID',
+    description: 'Streams the file content with appropriate Content-Type',
+  })
+  @ApiParam({ name: 'id', description: 'Graphic file ID' })
+  @ApiResponse({ status: 200, description: 'Returns the file content' })
+  @ApiResponse({ status: 404, description: 'File not found' })
+  @ApiResponse({ status: 500, description: 'Server error' })
   getGraphic(@Param('id') id: string, @Res() res: Response): void {
     this.logger.debug(`Retrieving graphic with ID: ${id}`, this.CONTEXT);
 

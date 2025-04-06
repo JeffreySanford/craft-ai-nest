@@ -8,13 +8,16 @@ import {
   Header,
   Body,
   Post,
+  Param,
 } from '@nestjs/common';
 import { LoggerService, LogLevel, LogEntry, LogFilter } from './logger.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Response } from 'express';
 import { TemplateService } from '../shared/templates/template.service';
+import { ApiTags, ApiOperation, ApiQuery, ApiParam, ApiResponse, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('logs')
 @Controller('logs')
 export class LogsController {
   constructor(
@@ -24,6 +27,14 @@ export class LogsController {
 
   // This method needs to be BEFORE the :id route to ensure proper route matching
   @Get()
+  @ApiOperation({ summary: 'Get all logs with optional filtering' })
+  @ApiQuery({ name: 'level', required: false, description: 'Minimum log level (0=DEBUG to 4=ERROR)' })
+  @ApiQuery({ name: 'maxLevel', required: false, description: 'Maximum log level' })
+  @ApiQuery({ name: 'context', required: false, description: 'Context filter' })
+  @ApiQuery({ name: 'from', required: false, description: 'Start date (ISO format)' })
+  @ApiQuery({ name: 'to', required: false, description: 'End date (ISO format)' })
+  @ApiQuery({ name: 'pattern', required: false, description: 'Text search pattern' })
+  @ApiResponse({ status: 200, description: 'Returns filtered logs' })
   getAllLogs(
     @Query('level') level?: string,
     @Query('maxLevel') maxLevel?: string,
@@ -112,13 +123,19 @@ export class LogsController {
   @Get('level-test')
   async getLogLevelTestPage(@Res() res: Response): Promise<void> {
     this.logger.debug('Serving log level test page', 'LogsController');
-    
+
     try {
       // Render the level-test template from file
-      const html = await this.templateService.render('logs/level-test.html', {});
+      const html = await this.templateService.render(
+        'logs/level-test.html',
+        {},
+      );
       res.setHeader('Content-Type', 'text/html');
       res.send(html);
-      this.logger.debug('Log level test page served successfully', 'LogsController');
+      this.logger.debug(
+        'Log level test page served successfully',
+        'LogsController',
+      );
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       this.logger.error(
@@ -136,6 +153,12 @@ export class LogsController {
   @Header('Content-Type', 'text/event-stream')
   @Header('Cache-Control', 'no-cache')
   @Header('Connection', 'keep-alive')
+  @ApiOperation({ summary: 'Stream logs in real-time using SSE' })
+  @ApiQuery({ name: 'level', required: false, description: 'Minimum log level' })
+  @ApiQuery({ name: 'maxLevel', required: false, description: 'Maximum log level' })
+  @ApiQuery({ name: 'context', required: false, description: 'Context filter' })
+  @ApiQuery({ name: 'pattern', required: false, description: 'Text search pattern' })
+  @ApiResponse({ status: 200, description: 'Returns Server-Sent Events stream' })
   streamLogs(
     @Query('level') level?: string,
     @Query('maxLevel') maxLevel?: string,
@@ -210,94 +233,138 @@ export class LogsController {
           this.logger.error(
             `Failed to send error to client: ${message}`,
             'LogsController',
-          );mber | string,
+          );
         }
       },
       complete: () => {
         this.logger.debug('Log stream completed normally', 'LogsController');
         if (response.writable) {
           response.end();
-        }ut === 'string') {
-      },// Try to convert string level names to numbers
-    });   switch (levelInput.toUpperCase()) {
-        case 'DEBUG': level = LogLevel.DEBUG; break;
+        }
+      },
+    });
+
     // Handle client disconnect
-    response.on('close', () => {    case 'LOG': level = LogLevel.LOG; break;
-      this.logger.debug('WARN': level = LogLevel.WARN; break;
+    response.on('close', () => {
+      this.logger.debug(
         'Client disconnected from log stream',
         'LogsController',
       );
-      subscription.unsubscribe();       level = parseInt(levelInput, 10);
-    });      if (isNaN(level)) level = LogLevel.INFO; // Default
-  }          break;
+      subscription.unsubscribe();
+    });
+  }
 
   @Post()
-  createLog(ut as number;
-    @Body('level') level: number,
+  @ApiOperation({ summary: 'Create a new log entry' })
+  @ApiBody({ 
+    schema: {
+      type: 'object',
+      properties: {
+        level: { 
+          oneOf: [
+            { type: 'number', description: 'Log level number (0-4)' },
+            { type: 'string', enum: ['DEBUG', 'INFO', 'LOG', 'WARN', 'ERROR'], description: 'Log level name' }
+          ]
+        },
+        message: { 
+          oneOf: [
+            { type: 'string' },
+            { type: 'object', description: 'Complex message object' }
+          ],
+          description: 'Log message content'
+        },
+        context: { type: 'string', description: 'Log context name' }
+      },
+      required: ['message', 'level']
+    }
+  })
+  @ApiResponse({ status: 201, description: 'Log created successfully' })
+  createLog(
+    @Body('level') levelInput: number | string,
     @Body('message') message: LogEntry['message'],
-    @Body('context') context?: string,ssage, level, context);
-  ): void {g(
-    this.logger.log(message, level, context);ed: level=${level}, context=${context || 'none'}`,
+    @Body('context') context?: string,
+  ): void {
+    // Ensure level is a number
+    let level: number;
+
+    if (typeof levelInput === 'string') {
+      // Try to convert string level names to numbers
+      switch (levelInput.toUpperCase()) {
+        case 'DEBUG':
+          level = LogLevel.DEBUG;
+          break;
+        case 'INFO':
+          level = LogLevel.INFO;
+          break;
+        case 'LOG':
+          level = LogLevel.LOG;
+          break;
+        case 'WARN':
+          level = LogLevel.WARN;
+          break;
+        case 'ERROR':
+          level = LogLevel.ERROR;
+          break;
+        default:
+          // Try parsing as a number
+          level = parseInt(levelInput, 10);
+          if (isNaN(level)) {
+            level = LogLevel.INFO; // Default
+          }
+          break;
+      }
+    } else {
+      level = levelInput;
+    }
+
+    this.logger.log(message, level, context);
     this.logger.debug(
-      `Log created: level=${level}, context=${context || 'none'}`,    );
+      `Log created: level=${level}, context=${context || 'none'}`,
       'LogsController',
     );
-  }named routes
+  }
 
   // This route should come AFTER all other named routes
-  /*LogById(@Param('id') id: string): Observable<LogEntry> {
-  @Get(':id')    this.logger.debug(`Received request to get log with id: ${id}`, 'LogsController');
-  getLogById(@Param('id') id: string): Observable<LogEntry> {.getLogById(id).pipe();
-    this.logger.debug(`Received request to get log with id: ${id}`, 'LogsController');
-    return this.logger.getLogById(id).pipe();
+  @Get(':id')
+  @ApiOperation({ summary: 'Get log by ID' })
+  @ApiParam({ name: 'id', description: 'Log entry ID' })
+  @ApiResponse({ status: 200, description: 'Returns the log entry' })
+  @ApiResponse({ status: 404, description: 'Log not found' })
+  getLogById(@Param('id') id: string): Observable<LogEntry> {
+    this.logger.debug(
+      `Received request to get log with id: ${id}`,
+      'LogsController',
+    );
+    return this.logger.getLogById(id);
   }
-  */  private buildLogFilter(
 
-  private buildLogFilter(ing,
+  private buildLogFilter(
     level?: string,
-    maxLevel?: string,attern?: string,
-    context?: string,    fromDate?: string,
+    maxLevel?: string,
+    context?: string,
     pattern?: string,
     fromDate?: string,
     toDate?: string,
   ): LogFilter {
-    const filter: LogFilter = {};level
-= '') {
-    // Parse min level filter.minLevel = parseInt(level, 10);
-    if (level !== undefined) {      this.logger.debug(`Using min log level filter: ${filter.minLevel}`, 'LogsController');
+    const filter: LogFilter = {};
+
+    // Parse min level
+    if (level !== undefined && level !== '') {
       filter.minLevel = parseInt(level, 10);
-    } else {vel = LogLevel.DEBUG;
-      filter.minLevel = LogLevel.DEBUG;um level', 'LogsController');
+      this.logger.debug(
+        `Using min log level filter: ${filter.minLevel}`,
+        'LogsController',
+      );
+    } else {
+      filter.minLevel = LogLevel.DEBUG;
+      this.logger.debug('Using default DEBUG minimum level', 'LogsController');
     }
 
-    // Parse max levelevel
-    if (maxLevel !== undefined && maxLevel !== '') { if (maxLevel !== undefined && maxLevel !== '') {
-      filter.maxLevel = parseInt(maxLevel, 10);     filter.maxLevel = parseInt(maxLevel, 10);
-    }    }
+    // Parse max level
+    if (maxLevel !== undefined && maxLevel !== '') {
+      filter.maxLevel = parseInt(maxLevel, 10);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}  }    return filter;    }      filter.messagePattern = new RegExp(pattern);    if (pattern) {    // Parse message pattern    }      filter.toDate = new Date(toDate);    if (toDate) {    }      filter.fromDate = new Date(fromDate);    if (fromDate) {    // Parse date range    }      filter.contexts = [context];    if (context) {    // Parse context filter
     // Parse context filter
     if (context) {
       filter.contexts = [context];

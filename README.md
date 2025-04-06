@@ -47,7 +47,7 @@ We're currently in the development phase, with several key features already impl
 
 ## 📋 Features
 
-### Logging System
+### Advanced Logging System
 - **Real-time Log Streaming**: View logs as they happen with SSE (Server-Sent Events)
 - **Color-coded Log Levels**: Visual distinction between DEBUG, INFO, LOG, WARN, and ERROR
 - **Context-based Styling**: Special styling for performance, security, network, and user logs
@@ -56,15 +56,45 @@ We're currently in the development phase, with several key features already impl
 - **Audit Trail**: Track important system events in a separate audit log
 - **User Activity Tracking**: Monitor recent user actions and file operations
 
-### Graphics System
-- Secure file upload and storage using GridFS
-- On-demand file retrieval with proper content-type detection
-- Integration with the audit system for compliance tracking
+### File Storage System
+- **Secure File Upload**: Upload images and other files with proper validation
+- **GridFS Integration**: Store and retrieve files using MongoDB's GridFS
+- **Compliance Tracking**: Detailed audit logs for all file operations
+- **User Association**: Files linked to users who uploaded them
+- **Preview Capability**: View uploaded images directly in the browser
+- **Comprehensive Error Handling**: Robust error capture and reporting
 
 ### Metrics Collection (In Development)
-- Real-time CPU, memory, and request metrics
-- Historical data visualization
-- Threshold alerting for critical metrics
+- **Real-time Performance Data**: CPU, memory, and request metrics
+- **WebSocket Integration**: Live updates without page refreshes
+- **Dynamic Visualization**: Interactive charts with Chart.js
+- **Threshold Alerting**: Notifications when metrics exceed defined thresholds
+- **Historical Analysis**: View trends over custom time ranges
+
+## 🌈 Color Coding System
+
+The application uses a consistent color scheme to help quickly identify different types of information:
+
+### Log Levels
+- **DEBUG** (Blue #2196f3): Detailed information for troubleshooting
+- **INFO** (Green #4caf50): General operational information
+- **LOG** (Gray #9e9e9e): Standard operational logs
+- **WARN** (Amber #ffc107): Potential issues that should be reviewed
+- **ERROR** (Red #f44336): Critical problems requiring immediate attention
+
+### Specialized Contexts
+- **Performance** (Purple #9c27b0): System metrics and performance data
+- **Security** (Indigo #3f51b5): Authentication and security events
+- **Network** (Cyan #00bcd4): Connection and API request logs
+- **System** (Brown #795548): Core system operations
+- **User** (Orange #ff9800): User-related activities
+
+### UI Elements
+- **Primary Actions** (Indigo #3f51b5): Main application functions
+- **Secondary Actions** (Blue Gray #607d8b): Support functions
+- **Danger Actions** (Red #f44336): Destructive operations
+- **File Operations** (Orange #ff9800): File uploads and management
+- **Refreshing** (Cyan #00bcd4): Data refresh operations
 
 ## 🛠 Getting Started
 
@@ -99,35 +129,10 @@ We're currently in the development phase, with several key features already impl
 
 5. Access the application:
    - Log Viewer: http://localhost:3000/logs/view
+   - Log Level Test: http://localhost:3000/logs/level-test
+   - Graphics Upload: http://localhost:3000/graphics/upload
+   - Metrics Viewer: http://localhost:3000/metrics/viewer.html
    - GraphQL Playground: http://localhost:3000/graphql
-   - Metrics Viewer: http://localhost:3000/metrics/viewer.html (in development)
-
-## 📊 Log Viewer Usage Guide
-
-1. **Log Levels**
-   - **DEBUG**: All logs (most verbose)
-   - **INFO**: Information, warnings, and errors only
-   - **LOG**: Standard logs, warnings, and errors
-   - **WARN**: Only warnings and errors
-   - **ERROR**: Only error logs
-
-2. **Special Context Filters**:
-   - **UI/UX Events**: User interface interactions
-   - **System Events**: Core system operations
-   - **Metrics Events**: Performance data logs
-
-3. **Testing Log Generation**:
-   - Use the "Trigger Info Log" button to generate sample logs
-   - Use "Trigger Error Log" button to test error handling
-   - The "Test Log Levels" page (http://localhost:3000/logs/level-test) can generate logs at each level
-
-## 🔒 Security
-
-This project includes various security features:
-- Sanitized user input
-- Proper error handling
-- Audit logging for compliance
-- GraphQL query depth limiting
 
 ## 📖 Additional Documentation
 

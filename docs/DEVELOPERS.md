@@ -1,6 +1,6 @@
 # Developer Guide
 
-This guide provides information for developers working on the Craft AI NestJS project.
+This guide provides comprehensive information for developers working on the Craft AI NestJS project.
 
 ## Development Environment Setup
 

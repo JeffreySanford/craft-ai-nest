@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Subject, Observable, from } from 'rxjs';
-import { filter, share, shareReplay, map } from 'rxjs/operators';
+import { Subject, Observable, from, throwError } from 'rxjs';
+import { filter, share, shareReplay, map, catchError } from 'rxjs/operators';
 import { randomUUID } from 'crypto';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
@@ -303,5 +303,26 @@ export class LoggerService {
 
   createFilter(options: LogFilter): LogFilter {
     return { ...options };
+  }
+
+  // Add this method to the LoggerService class
+  getLogById(id: string): Observable<LogEntry> {
+    return from(this.logModel.findOne({ id }).exec()).pipe(
+      map((doc) => {
+        if (!doc) {
+          throw new Error(`Log with id ${id} not found`);
+        }
+        return doc.toObject() as LogEntry;
+      }),
+      catchError((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.error(
+          `Failed to retrieve log by id ${id}: ${message}`,
+          'LoggerService',
+          error,
+        );
+        return throwError(() => error);
+      }),
+    );
   }
 }
