@@ -2,59 +2,68 @@
 
 ## Supported Versions
 
-Currently, the Craft AI NestJS backend is in development and has not yet reached a stable release.
-Security updates will be applied to the main development branch.
+We currently support the following versions of Craft AI NestJS platform with security updates:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| dev     | :white_check_mark: |
+| 1.0.x   | :white_check_mark: |
+| < 1.0   | :x:                |
 
 ## Reporting a Vulnerability
 
-We take security seriously. If you discover a security vulnerability within Craft AI, please follow these steps:
+If you discover a security vulnerability in this project, please follow these steps:
 
-1. **Do not** disclose the vulnerability publicly on GitHub issues or other public forums.
-2. Send an email to [security@example.com](mailto:security@example.com) with a detailed description of the vulnerability.
-3. Include steps to reproduce the vulnerability if possible.
-4. We will acknowledge receipt of your vulnerability report as soon as possible and provide an estimated timeline for a fix.
-5. Once a fix is prepared, we will notify you and provide credit for the discovery if desired.
+1. **Do not** disclose the vulnerability publicly
+2. Email us at security@craft-ai.com with details of the vulnerability
+3. Allow time for us to assess and address the vulnerability
+4. We will coordinate with you on the disclosure timeline
+
+We take all security reports seriously and will respond as quickly as possible.
 
 ## Security Features
 
 ### Logging and Audit System
 
-The application includes a comprehensive logging and audit system that:
+The platform includes a comprehensive logging and audit system:
 
-- Records all system activities with appropriate context
-- Maintains a dedicated audit trail for security-relevant events
-- Uses different log levels (DEBUG, INFO, LOG, WARN, ERROR) to categorize information
-- Highlights security-related events with special styling
-- Allows filtering and searching logs to help identify suspicious activities
+- Event logging with multiple severity levels (DEBUG, INFO, WARN, ERROR, AUDIT)
+- Structured log entries with context, timestamp, and metadata
+- Real-time log streaming via Server-Sent Events (SSE)
+- Dedicated audit log entries for security-relevant operations
+- Searchable log interface with filtering capabilities
+- Observable-based reactive log processing pipeline
 
 ### File Upload Security
 
-When uploading files (such as through the Graphics system):
+The graphics upload system implements several security measures:
 
-- File types are validated on both client and server side
-- File size limits are enforced
-- Uploaded content is stored securely in MongoDB GridFS
-- All file operations are logged and tracked in the audit trail
-- User information is associated with each upload
-- Access control is implemented for file retrieval
+- File type validation and restriction
+- Stream-based file processing with GridFS
+- Audit logging of all upload operations with user context
+- Proper error handling with security context preservation
+- Resource cleanup via subscription management
+- Type-safe implementation with thorough validation
 
 ### API Security
 
-- GraphQL queries have depth and complexity limits to prevent abuse
-- HTTP headers are appropriately set to enhance security
-- Request validation is performed using NestJS pipes
-- Comprehensive error handling prevents sensitive information leakage
+Our API implementation includes:
+
+- Comprehensive input validation
+- Proper error handling that avoids information disclosure
+- Content-Type enforcement
+- Safe error messages that don't leak implementation details
+- Audit logging of sensitive operations
+- Rate limiting capabilities (configurable)
 
 ### Data Protection
 
-- All data is validated before processing
-- MongoDB connection uses best practices for security
-- Sensitive operations are logged with context information
-- System metrics are collected to help identify anomalies
+Data protection measures include:
+
+- In-memory database with proper isolation
+- GridFS for secure binary data storage
+- Type-safe data handling throughout the application
+- Reactive programming model with proper error boundaries
+- Controlled data serialization and deserialization
 
 ## Security Best Practices for Development
 
@@ -67,6 +76,7 @@ When contributing to this project, please follow these security best practices:
 5. **Logging**: Log security-relevant events but be careful not to log sensitive data
 6. **Code Review**: All code changes should be reviewed for security implications
 7. **Testing**: Write tests that verify security controls are working correctly
+8. **Reactive Programming**: Use the Observable pattern consistently to handle asynchronous operations safely
 
 ## Security Roadmap
 
@@ -80,6 +90,8 @@ The following security features are planned for future implementation:
 - [ ] Content Security Policy implementation
 - [ ] Security headers configuration
 - [ ] Automated security testing
+- [x] Reactive programming model for all asynchronous operations
+- [x] Comprehensive audit logging
 
 ## Security Considerations for AI Services
 
@@ -139,3 +151,4 @@ npm run security:fix
 - Error messages are sanitized to prevent information leakage
 - Timeout limits are set on external service calls
 - Retry mechanisms include exponential backoff to prevent DoS
+- Reactive programming with Observables is used consistently for asynchronous operations

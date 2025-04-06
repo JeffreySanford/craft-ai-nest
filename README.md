@@ -1,12 +1,10 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<p align="center">Craft AI Platform - Built with NestJS</p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
+<p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
@@ -16,131 +14,104 @@
 <a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
   <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
     <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-# Craft AI - NestJS Backend
+## Description
 
-![Status: In Development](https://img.shields.io/badge/Status-In%20Development-yellow)
+Craft AI is a comprehensive platform for building, testing, and deploying AI-assisted applications. This repository contains the NestJS backend that powers the platform.
 
-A powerful NestJS backend powering the Craft AI system with comprehensive logging, metrics collection, and GraphQL support.
+## Key Features
 
-## 🚀 Project Status
+- **Reactive Programming Model**: Fully embraces Observable patterns for all asynchronous operations
+- **AI Integration**: Built-in support for Ollama AI models with a GraphQL interface
+- **Comprehensive Monitoring**: Real-time monitoring of system metrics, memory usage, and database status
+- **Advanced Logging**: Structured logging system with real-time streaming and filtering
+- **File Storage**: Secure file upload and retrieval system using GridFS
+- **Simulation Tools**: Generate realistic user activity to test system performance
+- **GraphQL API**: Flexible API layer with Apollo Server integration
 
-We're currently in the development phase, with several key features already implemented:
+## Monitoring Dashboards
 
-### Completed ✅
-- **Step 1: Core Framework Setup** - NestJS with MongoDB, GraphQL, and Express
-- **Step 2: Advanced Logging System** - Real-time log viewer with filtering and streaming
-- **Step 3: File Storage System** - Graphics upload and retrieval with GridFS
+- **Memory Monitor**: Track memory consumption of various system components
+- **Database Monitor**: Monitor MongoDB and GraphQL database metrics
+- **Logs Viewer**: Real-time streaming log viewer with filtering and search
+- **API Documentation**: Swagger UI for REST API exploration
 
-### In Progress 🔄
-- **Step 4: Metrics Collection System** - Real-time metrics visualization (currently being implemented)
-- **Step 5: AI Integration** - Ollama service integration for AI capabilities
+## Installation
 
-### Planned 📝
-- **Step 6: User Authentication** - User management and access control
-- **Step 7: API Gateway** - Unified access point for all services
-- **Step 8: Deployment Pipeline** - Automated testing and deployment
+```bash
+$ npm install
+```
 
-## 📋 Features
+## Running the app
 
-### Advanced Logging System
-- **Real-time Log Streaming**: View logs as they happen with SSE (Server-Sent Events)
-- **Color-coded Log Levels**: Visual distinction between DEBUG, INFO, LOG, WARN, and ERROR
-- **Context-based Styling**: Special styling for performance, security, network, and user logs
-- **Advanced Filtering**: Filter by log level, context, and text search patterns
-- **Time Range Selection**: View logs from last 5 minutes to all time
-- **Audit Trail**: Track important system events in a separate audit log
-- **User Activity Tracking**: Monitor recent user actions and file operations
+```bash
+# development
+$ npm run start
 
-### File Storage System
-- **Secure File Upload**: Upload images and other files with proper validation
-- **GridFS Integration**: Store and retrieve files using MongoDB's GridFS
-- **Compliance Tracking**: Detailed audit logs for all file operations
-- **User Association**: Files linked to users who uploaded them
-- **Preview Capability**: View uploaded images directly in the browser
-- **Comprehensive Error Handling**: Robust error capture and reporting
+# watch mode
+$ npm run start:dev
 
-### Metrics Collection (In Development)
-- **Real-time Performance Data**: CPU, memory, and request metrics
-- **WebSocket Integration**: Live updates without page refreshes
-- **Dynamic Visualization**: Interactive charts with Chart.js
-- **Threshold Alerting**: Notifications when metrics exceed defined thresholds
-- **Historical Analysis**: View trends over custom time ranges
+# production mode
+$ npm run start:prod
+```
 
-## 🌈 Color Coding System
+## Test
 
-The application uses a consistent color scheme to help quickly identify different types of information:
+```bash
+# unit tests
+$ npm run test
 
-### Log Levels
-- **DEBUG** (Blue #2196f3): Detailed information for troubleshooting
-- **INFO** (Green #4caf50): General operational information
-- **LOG** (Gray #9e9e9e): Standard operational logs
-- **WARN** (Amber #ffc107): Potential issues that should be reviewed
-- **ERROR** (Red #f44336): Critical problems requiring immediate attention
+# e2e tests
+$ npm run test:e2e
 
-### Specialized Contexts
-- **Performance** (Purple #9c27b0): System metrics and performance data
-- **Security** (Indigo #3f51b5): Authentication and security events
-- **Network** (Cyan #00bcd4): Connection and API request logs
-- **System** (Brown #795548): Core system operations
-- **User** (Orange #ff9800): User-related activities
+# test coverage
+$ npm run test:cov
+```
 
-### UI Elements
-- **Primary Actions** (Indigo #3f51b5): Main application functions
-- **Secondary Actions** (Blue Gray #607d8b): Support functions
-- **Danger Actions** (Red #f44336): Destructive operations
-- **File Operations** (Orange #ff9800): File uploads and management
-- **Refreshing** (Cyan #00bcd4): Data refresh operations
+## Architecture
 
-## 🛠 Getting Started
+The Craft AI platform follows a modular architecture built on NestJS:
 
-### Prerequisites
-- Node.js (v16+)
-- MongoDB (v4.4+)
-- Ollama (for AI capabilities)
+- **Core Modules**:
+  - `AppModule`: Main application module that ties everything together
+  - `LoggerModule`: Comprehensive logging system with real-time streaming
+  - `DatabaseModule`: MongoDB integration with reactive interfaces
 
-### Installation
+- **Feature Modules**:
+  - `GraphicsModule`: File upload and retrieval services
+  - `MemoryModule`: Memory monitoring and management
+  - `AiModule`: Integration with LLM models via Ollama
+  - `SimulationModule`: Tools for generating realistic user activity
 
-1. Clone the repository
-   ```bash
-   git clone https://github.com/yourusername/craft-ai-nest.git
-   cd craft-ai-nest
-   ```
+- **Shared Components**:
+  - `TemplateService`: Reactive template rendering with caching
+  - Navigation system with consistent UI across all views
 
-2. Install dependencies
-   ```bash
-   npm install
-   ```
+## Reactive Programming Patterns
 
-3. Start MongoDB
-   ```bash
-   # Using Docker
-   docker run -d -p 27017:27017 --name craft-ai-mongo mongo:latest
-   ```
+This project fully embraces reactive programming using RxJS Observables throughout the codebase:
 
-4. Start the application
-   ```bash
-   npm run start:dev
-   ```
+- Observable-based HTTP responses for streaming data
+- Real-time event streaming for logs and metrics
+- Reactive database queries
+- Observable-based file uploads and downloads
+- Server-sent events (SSE) for push notifications
 
-5. Access the application:
-   - Log Viewer: http://localhost:3000/logs/view
-   - Log Level Test: http://localhost:3000/logs/level-test
-   - Graphics Upload: http://localhost:3000/graphics/upload
-   - Metrics Viewer: http://localhost:3000/metrics/viewer.html
-   - GraphQL Playground: http://localhost:3000/graphql
+## Documentation
 
-## 📖 Additional Documentation
+- API documentation is available at `/api` when the server is running
+- GraphQL playground is available at `/graphql`
+- Each monitoring dashboard includes its own usage documentation
 
-- [Developer Guide](docs/DEVELOPERS.md)
-- [Metrics System](docs/METRICS.md) 
-- [API Documentation](docs/API.md)
-- [Security Policy](SECURITY.md)
+## Contributing
 
-## 📝 License
+Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Security
+
+Please review our [Security Policy](SECURITY.md) for information about reporting vulnerabilities and our security practices.
+
+## License
+
+The Craft AI Platform is [MIT licensed](LICENSE).
